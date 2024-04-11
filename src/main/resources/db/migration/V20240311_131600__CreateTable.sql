@@ -1,0 +1,7 @@
+CREATE SEQUENCE  IF NOT EXISTS hibernate_sequence START WITH 1 INCREMENT BY 1;
+
+CREATE TABLE TestEntity (
+  id BIGINT NOT NULL,
+   mustBeValid VARCHAR(255) NOT NULL,
+   CONSTRAINT pk_testentity PRIMARY KEY (id)
+);

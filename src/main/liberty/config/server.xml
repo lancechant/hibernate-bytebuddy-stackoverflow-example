@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<server description="${project.name}">
+
+    <featureManager>
+        <feature>microProfile-6.1</feature>
+        <feature>mpTelemetry-1.1</feature>
+        <feature>enterpriseBeansLite-4.0</feature>
+        <feature>messaging-3.1</feature>
+        <feature>mdb-4.0</feature>
+        <feature>beanValidation-3.0</feature>
+        <feature>localConnector-1.0</feature>
+        <feature>mpMetrics-5.1</feature>
+        <feature>appSecurity-5.0</feature>
+        <feature>persistenceContainer-3.1</feature>
+        
+    </featureManager>
+
+    <httpEndpoint id="defaultHttpEndpoint"
+                  httpPort="9080"
+                  httpsPort="19443"/>
+
+    <logging appsWriteJson="true"/>
+
+    <webApplication location="${project.name}.war" contextRoot="${app.context.root}">
+        <classloader apiTypeVisibility="api,ibm-api,spec,stable,third-party" />
+    </webApplication>
+    <mpMetrics authentication="false"/>
+
+    <!-- This is the keystore that will be used by SSL and by JWT. -->
+    <keyStore id="defaultKeyStore" location="public.jks" type="JKS" password="atbash" />
+
+
+    <!-- The MP JWT configuration that injects the caller's JWT into a ResourceScoped bean for inspection. -->
+    <mpJwt id="jwtUserConsumer" keyName="theKeyId" audiences="targetService" issuer="${jwt.issuer}"/>
+
+    <!--    postgres -->
+    <connectionManager id="tagDataSourceConnectionManager"
+                       maxPoolSize="80"
+                       minPoolSize="2"
+                       maxIdleTime="1m"
+                       purgePolicy="ValidateAllConnections"/>
+    <dataSource id="DefaultDataSource"
+                jndiName="jdbc/postgres"
+                type="javax.sql.XADataSource"
+                connectionManagerRef="tagDataSourceConnectionManager"
+                transactional="true">
+        <jdbcDriver libraryRef="PostgresLib"/>
+        <properties.postgresql databaseName="PACManDB"
+                               serverName="localhost"
+                               portNumber="9090"
+                               user="postgres"
+                               password="admin"
+                               currentSchema="demo"
+                               applicationName="${project.name}"/>
+    </dataSource>
+
+    <library id="PostgresLib">
+        <file name="${server.config.dir}/lib/postgresql-jar-42.2.8.jar"/>
+    </library>
+
+</server>
